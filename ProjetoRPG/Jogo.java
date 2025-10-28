@@ -234,13 +234,13 @@ setPontosVida(pontosVidaAtual - danoReduzido);
 // ----- SUBCLASSES GUERREIRO, MAGO, ARQUEIRO -----
 class Guerreiro extends Personagem {
 public Guerreiro() {
-super("Guerreiro", 130, 15, 25, 1);
+super("Guerreiro", 150, 15, 25, 1);
 inventario.adicionarItem(new Item("Poção de Cura", "Restaura 20 de vida", "cura", 2));
 inventario.adicionarItem(new Item("Poção de Ataque", "Aumenta ataque em 50% no próximo ataque", "ataque", 1));
 }
 
 public Guerreiro(String nome) {
-super(nome, 130, 15, 25, 1);
+super(nome, 150, 15, 25, 1);
 inventario.adicionarItem(new Item("Poção de Cura", "Restaura 20 de vida", "cura", 2));
 inventario.adicionarItem(new Item("Poção de Ataque", "Aumenta ataque em 50% no próximo ataque", "ataque", 1));
 }
@@ -349,36 +349,9 @@ private boolean ataqueBonusAtivo = false; // Para controlar poção de ataque
 
 private int etapaHistoria = 0; // 0: inicio, 1: pós ninja, 2: pós guarda-costas, 3: samurai
 
-public Jogo() {
-System.out.println("Bem-vindo ao RPG do Guerreiro Oriental contra Onis!");
-System.out.print("Digite o nome do seu personagem: ");
-String nome = scanner.nextLine();
 
-System.out.println("\nApós tanta luta, você decide se aventurar e largar sua cidade natal!");
-System.out.println("Durante sua aventura, você encontra um templo abandonado...");
 
-System.out.println("\nEscolha sua classe:");
-System.out.println("1. Guerreiro");
-System.out.println("2. Mago");
-System.out.println("3. Arqueiro");
-System.out.print("Sua escolha: ");
 
-int classe = lerInt(1, 3);
-switch (classe) {
-case 1:
-jogador = new Guerreiro(nome);
-break;
-case 2:
-jogador = new Mago(nome);
-break;
-case 3:
-jogador = new Arqueiro(nome);
-break;
-}
-
-System.out.println("Você criou o " + jogador.getNome() + " da classe " + jogador.getClass().getSimpleName());
-menuPrincipal();
-}
 
 private void menuPrincipal() {
 while (true) {
@@ -400,19 +373,68 @@ break;
 }
 }
 
-private void explorar() {
-System.out.println("\nExplorando...");
-int evento = rand.nextInt(3); // 0: encontro inimigo, 1: encontrar poção, 2: encontrar arma
+public Jogo() {
+    System.out.println("Bem-vindo ao RPG do Guerreiro Oriental!");
+    System.out.print("Digite o nome do seu personagem: ");
+    String nome = scanner.nextLine();
+    
+    System.out.println("\nApós uma ordem do shogunato,");
+    System.out.println("Você encaminha numa jornada rumo a cabeça do senhor feudal rival!");
+    
+    System.out.println("\nEscolha sua classe:");
+    System.out.println("1. Guerreiro");
+    System.out.println("2. Mago");
+    System.out.println("3. Arqueiro");
+    System.out.print("Sua escolha: ");
+    
+    int classe = lerInt(1, 3);
+    switch (classe) {
+    case 1:
+    jogador = new Guerreiro(nome);
+    break;
+    case 2:
+    jogador = new Mago(nome);
+    break;
+    case 3:
+    jogador = new Arqueiro(nome);
+    break;
+    }
+    
+    System.out.println("Você criou o " + jogador.getNome() + " da classe " + jogador.getClass().getSimpleName());
+    menuPrincipal();
+    }
 
-if (evento == 0) {
-Inimigo inimigo = criarInimigoAleatorio();
-System.out.println("Um inimigo aparece! É o " + inimigo.getNome());
-batalha(inimigo);
-} else if (evento == 1) {
-encontrarPocao();
-} else {
-encontrarArma();
-}
+private void explorar() {
+    System.out.println("\nExplorando...");
+
+    Inimigo inimigo = null;
+
+    // Define o inimigo com base na etapa da história
+    switch (etapaHistoria) {
+        case 0:
+            System.out.println("Após uma longa caminhada para o castelo Ueda, a noite cai. \nAntes de dormir, você é confrontado por um ninja!");
+            inimigo = new Inimigo("Ninja", 90, 18, 20, 1);
+            System.out.println("Um inimigo aparece! É o " + inimigo.getNome() );
+            break;
+        case 1:
+            System.out.println("Chegando na porta do Castelo,\nvocê se depara com um guardinha mequetrefe,\nele diz:\n-Você não pode passar porque...etc etc.\nVocê não liga e vai pra cima");
+            inimigo = new Inimigo("Guarda-Costas", 130, 15, 30, 1);
+            System.out.println("Um novo inimigo surge! É o " + inimigo.getNome() );
+            break;
+        case 2:
+            System.out.println("Entrando no castelo, você vai acabando com todos burguezinhos, \nate chegar o braço direito de Yukimura: \n-Nossa batalha será mais do que lendária\ndisse ele, então você aceita o desafio e...");
+            inimigo = new Inimigo("Samurai", 120, 25, 25, 1);
+            System.out.println("O último inimigo aparece! É o " + inimigo.getNome() );
+            break;
+        default:
+            System.out.println("Você conquista todas terras da puc " + jogador.getNome() + "!");
+            System.out.println("Fim da jornada do " + jogador.getClass().getSimpleName() + "!");
+            System.exit(0);
+            return;
+    }
+
+    // Inicia a batalha com o inimigo determinado
+    batalha(inimigo);
 }
 
 private Inimigo criarInimigoAleatorio() {
@@ -431,12 +453,7 @@ System.out.println("Você encontrou uma Poção de Cura! +1 ao inventário.");
 jogador.getInventario().adicionarItem(new Item("Poção de Cura", "Restaura 20 de vida", "cura", 1));
 }
 
-private void encontrarArma() {
-System.out.println("Você encontrou uma Katana!");
-// Katana que aumenta ataque em 10
-Item katana = new Item("Katana", "Aumenta ataque em 10", "katana", 1, 10);
-jogador.getInventario().adicionarItem(katana);
-}
+
 
 private void mostrarInventario() {
 Inventario inv = jogador.getInventario();
@@ -462,7 +479,7 @@ private void usarItem(Item item) {
 switch (item.getEfeito()) {
 case "cura":
 if (item.getQuantidade() > 0) {
-jogador.setPontosVida(jogador.getPontosVida() + 20);
+jogador.setPontosVida(jogador.getPontosVida() + 40);
 System.out.println("Você usou uma Poção de Cura. Vida restaurada para " + jogador.getPontosVida());
 jogador.getInventario().removerItem(item, 1);
 }
@@ -474,94 +491,92 @@ System.out.println("Você usou uma Poção de Ataque. Próximo ataque com +50% d
 jogador.getInventario().removerItem(item, 1);
 }
 break;
-case "katana":
-// Equipa a katana
-jogador.equiparArma(item);
-jogador.getInventario().removerItem(item, 1);
-System.out.println("Katana equipada. Ataque aumentado em 10.");
-break;
-default:
-System.out.println("Item não utilizável.");
 }
 }
 
 private void batalha(Inimigo inimigo) {
-System.out.println("Início da batalha: " + jogador.getNome() + " vs " + inimigo.getNome());
-// Reset vida inicial do mago para cura
-if (jogador instanceof Mago) {
-((Mago) jogador).resetVidaNoInicio();
+    System.out.println("Início da batalha: " + jogador.getNome() + " vs " + inimigo.getNome());
+
+    // Reset para o Mago
+    if (jogador instanceof Mago) {
+        ((Mago) jogador).resetVidaNoInicio();
+    }
+
+    while (jogador.estaVivo() && inimigo.estaVivo()) {
+        System.out.println("\nSua vida: " + jogador.getPontosVida() + "/" + jogador.pontosVidaBase);
+        System.out.println("Vida inimiga: " + inimigo.getPontosVida() + "/" + inimigo.pontosVidaBase);
+        System.out.println("Escolha ação:");
+        System.out.println("1. Rolar dado para atacar");
+        System.out.println("2. Usar item");
+        System.out.println("3. Fugir");
+
+        int escolha = lerInt(1, 3);
+
+        if (escolha == 1) {
+            int dadoJogador = rand.nextInt(6) + 1; // rola de 1 a 6
+            int ataqueBase = jogador.getAtaqueBase();
+            int ataqueTotal = ataqueBase + dadoJogador;
+
+            
+
+            if (ataqueBonusAtivo) {
+                ataqueTotal = (int) (ataqueTotal * 1.5);
+                ataqueBonusAtivo = false;
+                System.out.println("Poção de ataque ativada! +50% de dano!");
+            }
+
+            System.out.println(jogador.getNome() + " rolou o dado e tirou " + dadoJogador + "!");
+            System.out.println("Ataque base: " + ataqueBase);
+            
+            System.out.println("Dano total: " + ataqueTotal);
+            inimigo.receberDano(ataqueTotal);
+
+            if (!inimigo.estaVivo()) {
+                System.out.println("Você derrotou o " + inimigo.getNome() + "!");
+                recompensaPosBatalha(inimigo);
+                break;
+            }
+
+            // Inimigo ataca
+            int dadoInimigo = rand.nextInt(6) + 1;
+            int ataqueInimigo = inimigo.getAtaqueBase() + dadoInimigo;
+
+            System.out.println(inimigo.getNome() + " rola o dado e tira " + dadoInimigo + "!");
+            System.out.println(inimigo.getNome() + " causa " + ataqueInimigo + " de dano!");
+            jogador.receberDano(ataqueInimigo);
+
+            if (!jogador.estaVivo()) {
+                System.out.println("Você foi derrotado...");
+                System.exit(0);
+            }
+
+        } else if (escolha == 2) {
+            mostrarInventario();
+        } else {
+            System.out.println("Você fugiu da batalha!");
+            return;
+        }
+    }
 }
 
-while (jogador.estaVivo() && inimigo.estaVivo()) {
-System.out.println("\nSua vida: " + jogador.getPontosVida() + "/" + jogador.pontosVidaBase);
-System.out.println("Vida inimiga: " + inimigo.getPontosVida() + "/" + inimigo.pontosVidaBase);
-System.out.println("Escolha ação:");
-System.out.println("1. Atacar");
-System.out.println("2. Usar item");
-System.out.println("3. Fugir");
 
-int escolha = lerInt(1, 3);
-
-if (escolha == 1) {
-int ataqueJogador;
-if (jogador instanceof Mago) {
-ataqueJogador = ((Mago) jogador).atacarComCura(ataqueBonusAtivo);
-if (ataqueBonusAtivo) {
-ataqueBonusAtivo = false;
-System.out.println("Ataque aumentado em 50% por efeito da poção!");
-}
-} else {
-ataqueJogador = jogador.getAtaqueTotal();
-if (ataqueBonusAtivo) {
-ataqueJogador = (int) (ataqueJogador * 1.5);
-ataqueBonusAtivo = false;
-System.out.println("Ataque aumentado em 50% por efeito da poção!");
-}
-}
-System.out.println(jogador.getNome() + " ataca causando " + ataqueJogador + " de dano.");
-inimigo.receberDano(ataqueJogador);
-} else if (escolha == 2) {
-mostrarInventario();
-continue; // volta para o loop, não permite inimigo atacar ainda
-} else {
-System.out.println("Você fugiu da batalha!");
-return;
-}
-
-if (!inimigo.estaVivo()) {
-System.out.println("Você derrotou o " + inimigo.getNome() + "!");
-recompensaPosBatalha(inimigo);
-break;
-}
-
-// Ataque do inimigo
-int ataqueInimigo = inimigo.getAtaqueTotal();
-System.out.println(inimigo.getNome() + " ataca causando " + ataqueInimigo + " de dano.");
-jogador.receberDano(ataqueInimigo);
-
-if (!jogador.estaVivo()) {
-System.out.println("Você foi derrotado...");
-System.exit(0);
-}
-}
-}
 
 private void recompensaPosBatalha(Inimigo inimigo) {
 if (inimigo.getNome().equalsIgnoreCase("Ninja")) {
-Item katana = new Item("Katana Ninja", "Katana poderosa", "katana", 1, 15);
-jogador.getInventario().adicionarItem(katana);
+
 etapaHistoria = 1;
-System.out.println("Você ganhou uma Katana Ninja!");
+System.out.println("Agora você segue sua jornada em busca de inimigos mais fortes!");
 } else if (inimigo.getNome().equalsIgnoreCase("Guarda-Costas")) {
 Item pocaoCura = new Item("Poção de Cura", "Restaura 20 de vida", "cura", 3);
 jogador.getInventario().adicionarItem(pocaoCura);
 etapaHistoria = 2;
-System.out.println("Você recebeu 3 Poções de Cura!");
+System.out.println("Você recebeu 3 Poções de Cura! Após isso você á coloca na mochila e segue para enfrentar o ultimo boss");
 } else if (inimigo.getNome().equalsIgnoreCase("Samurai")) {
-Item katana = new Item("Katana Samurai", "Katana lendária", "katana", 1, 20);
-jogador.getInventario().adicionarItem(katana);
 etapaHistoria = 3;
-System.out.println("Você ganhou uma Katana Samurai!");
+System.out.println("Você acabou sua jornada! Agora pode descansar em paz!");
+if (inimigo.getNome().equalsIgnoreCase("Ninja")) etapaHistoria = 1;
+else if (inimigo.getNome().equalsIgnoreCase("Guarda-Costas")) etapaHistoria = 2;
+else if (inimigo.getNome().equalsIgnoreCase("Samurai")) etapaHistoria = 3;
 }
 }
 
