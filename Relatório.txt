@@ -1,0 +1,7 @@
+O projeto foi feito por Paulo Cesar e Kaio Burilli
+Paulo: Criou os itens, personagens jogáveis( e habilidades deles), inventario e o sistema de batalha.
+Kaio: Criou os inimigos, procurou sobre a historia e aplicou no projeto e alinhou em etapas as fases do jogo.
+Cada um cuidou de uma classe do projeto, porem o desenvolvimento foi feito em conjunto. Como a história é real, foram feitas pesquisas para aplicar no projeto. 
+Para construir o projeto tivemos ajuda de vídeos e sites. Usamos IA para comentar o código e para ajudar no sistema de batalha. 
+
+A nota que achamos que seria justo é um 7,5. O projeto está funcionando e está bom. O problema é que esta um pouco bagunçado em apenas um arquivo, por isso foi usado os comentários, para deixar mais claro onde está cada coisa, pois tivemos problema em organizar os itens separadamente. A história esta boa porém não foi tão aprofundada. 
